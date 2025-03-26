@@ -3,38 +3,38 @@
     internal class Ticket
     {
 
-        private double _cost;
+        private double _cost = 0;
 
         public Ticket()
         {
-            _cost = 0;
+            Cost = 0;
         }
         public Ticket(double cost)
         {
-            _cost = cost;
+            Cost = cost;
         }
 
         public double Cost
         {
             get => _cost;
-            set => _cost = value;
+            set
+            {
+                if (value < 0)
+                {
+                    throw new Exception("Цена не может быть меньше нуля");
+                }
+                _cost = value;
+            }
         }
 
-        public void IncreaseCost(double cost) 
+        public void IncreaseCost(double cost)
         {
-            _cost += cost;  
+            Cost += cost;
         }
 
         public void DecreaseCost(double cost)
         {
-            if (cost > _cost)
-            {
-                _cost = 0;
-            }
-            else
-            {
-                _cost -= cost;
-            }
+            Cost -= cost;
         }
     }
 }

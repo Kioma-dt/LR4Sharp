@@ -21,15 +21,38 @@
             Console.WriteLine($"Старая цена: {station.TicketCost}");
             if (answer is "0")
             {
-                Console.Write("Насколько вы хотите уменьшить цену: ");
-                double decrese = CheckDecrese(station.TicketCost);
-                station.DecreaseTicketCost(decrese);
+                double decrese = 0d;
+                try
+                {
+                    Console.Write("Насколько вы хотите уменьшить цену: ");
+                    decrese = Double.Parse(Console.ReadLine() ?? String.Empty);
+                    if (decrese < 0) {
+                        throw new Exception("Уменьшение должно быть неотрицательым");
+                    }
+                    station.DecreaseTicketCost(decrese);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Не удалось уменьшить цену: {ex.Message}");
+                }
             }
             else
             {
-                Console.Write("Насколько вы хотите увеличить цену: ");
-                double increse = CheckUDouble();
-                station.IncreaseTicketCost(increse);
+                double increse = 0d;
+                try
+                {
+                    Console.Write("Насколько вы хотите увеличить цену: ");
+                    increse = Double.Parse(Console.ReadLine() ?? String.Empty);
+                    if (increse < 0)
+                    {
+                        throw new Exception("Увеличение должно быть неотрицательым");
+                    }
+                    station.IncreaseTicketCost(increse);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Не удалось увеличить цену {ex.Message}");
+                }
             }
             Console.WriteLine($"Новая цена: {station.TicketCost}");
         }
@@ -42,90 +65,28 @@
             Console.WriteLine($"Стоимость билета: {station.TicketCost}");
         }
 
-        public static void SetData(out string? name, out uint places, out uint soldTickets, out double cost)
+        public static void SetData(Station station)
         {
-            Console.Write("Введите название станции: ");
-            name = Console.ReadLine();
-            Console.Write("Введите количество мест: ");
-            places = Methods.CheckUInt();
-            Console.Write("Введите количество проданных билетов: ");
-            soldTickets = Methods.CheckSoldTickets(places);
-            Console.Write("Введите стоимость билет: ");
-            cost = Methods.CheckUDouble();
-        }
+            string? name = station.Name;
+            uint places = station.Places, soldTickets = station.SoldTickets;
+            double cost = station.TicketCost;
 
-        public static double CheckUDouble()
-        {
-            double number = 0d;
-            bool isDouble = false;
-            string? s = String.Empty;
-
-            while (!isDouble)
+            try
             {
-                s = Console.ReadLine();
-                isDouble = Double.TryParse(s, out number) && number >= 0;
-                if (!isDouble)
-                {
-                    Console.Write("Неверный формат ввода! Необходимо ввести неотрицательное число: ");
-                }
+                Console.Write("Введите название станции: ");
+                name = Console.ReadLine() ?? String.Empty;
+                Console.Write("Введите количество мест: ");
+                places = UInt32.Parse(Console.ReadLine() ?? String.Empty);
+                Console.Write("Введите количество проданных билетов: ");
+                soldTickets = UInt32.Parse(Console.ReadLine() ?? String.Empty);
+                Console.Write("Введите стоимость билет: ");
+                cost = Double.Parse(Console.ReadLine() ?? String.Empty);
+                station.SetData(name, places, soldTickets, cost);
             }
-
-            return number;
-        }
-
-        public static uint CheckUInt()
-        {
-            uint number = 0;
-            bool isUInt = false;
-            string? s = String.Empty;
-
-            while (!isUInt)
+            catch (Exception ex) 
             {
-                s = Console.ReadLine();
-                isUInt = UInt32.TryParse(s, out number);
-                if (!isUInt)
-                {
-                    Console.Write("Неверный формат ввода! Необходимо ввести целое неотрицательное число: ");
-                }
+                Console.WriteLine($"Не удалось изменить станцию: {ex.Message}");
             }
-
-            return number;
-        }
-
-        public static uint CheckSoldTickets(uint places)
-        {
-            uint soldTickets = 0;
-            bool rightSold = false;
-
-            while (!rightSold)
-            {
-                soldTickets = CheckUInt();
-                rightSold = soldTickets <= places;
-                if (!rightSold)
-                {
-                    Console.Write("Количество проданных билетов не может быть больше мест! Введите верное количество: ");
-                }
-            }
-
-            return soldTickets;
-        }
-
-        public static double CheckDecrese(double cost)
-        {
-            double decrese = 0d;
-            bool rightDecrese = false;
-
-            while (!rightDecrese)
-            {
-                decrese = CheckUDouble();
-                rightDecrese = decrese <= cost;
-                if (!rightDecrese)
-                {
-                    Console.Write("Уменьшение стоимости билета больше изначльной стоимости! Введите верное уменьшение: ");
-                }
-            }
-
-            return decrese;
         }
     }
 }
